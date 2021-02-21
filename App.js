@@ -1,21 +1,34 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar } from 'react-native';
+import MainNavigation from './mainNavigation';
+
+import { combineReducers, createStore, applyMiddleware } from 'redux';
+import { Provider } from 'react-redux';
+import ReduxThunk from 'redux-thunk';
+
+import Auth from './store/reducer/auth';
+
+import firebase from 'firebase';
+import { firebaseConfig } from './config';
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig)
+}
+
+
+const root = combineReducers({
+  auth: Auth
+})
+
+const store = createStore(root, applyMiddleware(ReduxThunk));
+
+
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Provider store={store}>
+        <StatusBar barStyle='light-content' />
+        <MainNavigation />
+    </Provider>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
