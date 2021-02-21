@@ -26,7 +26,7 @@ const store = createStore(root, applyMiddleware(ReduxThunk));
 export default function App() {
   return (
     <Provider store={store}>
-        <StatusBar barStyle='light-content' />
+        <StatusBar />
         <MainNavigation />
     </Provider>
   );

@@ -2,7 +2,7 @@ import { AUTHENTICATION, ONBOARDING } from "../actions/auth";
 
 const initialState = {
     isAuth: false,
-    isOnboarding: false,
+    isOnboarding: true,
 }
 
 const authReducer = (state = initialState, action) => {

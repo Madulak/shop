@@ -22,7 +22,6 @@ const signin = ({navigation}) => {
 
     useEffect(() => {
         checkIfLoggedIn()
-        signInWithGoogleAsync()
     },[])
 
     const checkIfLoggedIn = () => {
@@ -47,6 +46,7 @@ const signin = ({navigation}) => {
           if (result.type === 'success') {
               console.log('[RESULTS] ',result);
               onSignIn(result)
+              auth()
             return result.accessToken;
           } else {
               console.log('[CANCELLED]')
@@ -175,7 +175,7 @@ const signin = ({navigation}) => {
                         style={{...styles.textInput}}
                     />
                     
-                    <TouchableOpacity onPress={signInWithGoogleAsync} style={styles.loginContainer}>
+                    <TouchableOpacity onPress={auth} style={styles.loginContainer}>
                         <Text style={styles.loginText}>Log In</Text>
                     </TouchableOpacity>
 
@@ -194,7 +194,7 @@ const signin = ({navigation}) => {
                         type='google'
                         style={styles.googleButton}
                         // onPress={onSignIn}
-                        //   onPress={signInWithGoogleAsync}
+                        onPress={signInWithGoogleAsync}
                     />
                 </View>
             </View>

@@ -32,6 +32,7 @@ const homescreen = ({navigation}) => {
                 <View style={styles.container}>
                     {/* <ScrollView> */}
                         <FlatList
+                            listKey='categories'
                             horizontal
                             showsHorizontalScrollIndicator={false}
                             data={categories}

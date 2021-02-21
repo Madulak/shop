@@ -165,11 +165,11 @@ const mainNavigation = () => {
 
     return (
         <NavigationContainer>
-            {/* {isOnboarding ?
+            {isOnboarding ?
                 <Onboarding />:
-                <>{!isAuth ? <Authentication />: <DrawerScreens/> }</>
-            } */}
-            <Stacks />
+                <>{!isAuth ? <Authentication />: <Stacks />}</>
+            }
+            {/* <Stacks /> */}
             
         </NavigationContainer>
     )
