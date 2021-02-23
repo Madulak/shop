@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
-import { View, Text, Dimensions, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Dimensions, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { SocialIcon } from 'react-native-elements';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import * as Google from 'expo-google-app-auth';
-import firebase from 'firebase';
+import { firebase } from '../../config';
 import { useDispatch } from 'react-redux';
 import * as authActions from '../../store/actions/auth';
 
@@ -15,23 +15,42 @@ const signin = ({navigation}) => {
 
     //472505486503-jnds042k3dgp9qvqfiggjj3s2h8kv13a.apps.googleusercontent.com
 
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(true)
+
     const dispatch = useDispatch();
     const auth = () => {
         dispatch(authActions.authentication());
     }
 
     useEffect(() => {
-        checkIfLoggedIn()
+        
+        checkIfLoggedIn();
+        
     },[])
 
+    // console.log('[LOADING] ', loading)
+
+    const loginEmail = () => {
+        setLoading(true);
+        dispatch(authActions.login(email, password));
+        setEmail('');
+        setPassword('');
+        setLoading(false);
+    }
+
     const checkIfLoggedIn = () => {
+        setLoading(true);
         firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
-                console.log('[LOGGED IN] ');
+                console.log('[LOGGED IN] ', user);
+                auth()
             } else {
                 console.log('[NOT LOGGED IN] ')
             }
         }) 
+        setLoading(false);
     }
 
     async function signInWithGoogleAsync() {
@@ -46,6 +65,12 @@ const signin = ({navigation}) => {
           if (result.type === 'success') {
               console.log('[RESULTS] ',result);
               onSignIn(result)
+              await firebase.firestore().collection('users').add({
+                email: result.user.email,
+                fullname: result.user.familyName,
+                photoUrl: result.user.photoUrl,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            })
               auth()
             return result.accessToken;
           } else {
@@ -53,6 +78,7 @@ const signin = ({navigation}) => {
             return { cancelled: true };
           }
         } catch (e) {
+          console.log('[ERROR] ', e);
           return { error: true };
         }
       }
@@ -99,62 +125,17 @@ const signin = ({navigation}) => {
           }
         });
       }
-
-    const signInWithGoogleAsyncs = async () => {
-        // try {
-        //     console.log('Trying to Work')
-        //   const result = await Google. logInAsync({
-        //     // behavior: 'web',
-        //     issuer: 'https://accounts.google.com',
-  
-        //     androidClientId: '184694901004-r02o8fkbqgvpv4ohh7u4br0qt3klf8ti.apps.googleusercontent.com',
-        //     // iosClientId: YOUR_CLIENT_ID_HERE,
-        //     scopes: ['openid', 'profile'],
-        //   })
-        //   let authState = await AppAuth.authAsync(config);
-        //   await cacheAuthAsync(authState);
-        //   console.log('signInAsync', authState);
-        //   return authState;
-        //   console.log('Fixing the ')
-
-        //   console.log(result)
-        //       if (result.type === 'success') {
-        //         onSignIn(result);
-                
-        //       return result.accessToken;
-        //     } else {
-        //       return { cancelled: true };
-        //     }
-          
-        // } catch (e) {
-        //   return { error: true };
-        // }
-      //   console.log('Trying to Work')
-       Google.logInAsync({
-          // behavior: 'web',
-          androidClientId: '472505486503-jnds042k3dgp9qvqfiggjj3s2h8kv13a.apps.googleusercontent.com',
-          // iosClientId: YOUR_CLIENT_ID_HERE,
-          scopes: ['profile', 'email'],
-        })
-        .then(result => {
-            if (result.type === 'success') {
-              console.log('[Results]')
-                // onSignIn(result);
-              // return result.accessToken;
-            } else {
-              return { cancelled: true };
-            }
-        })
-        .catch(error => console.log(error));
-        console.log('Fixing the ')
-
-        
-      }
       
 
     return (
-        <View style={styles.container}>
-            
+        <>
+        {loading === true ? 
+            <View style={{...styles.container, justifyContent: 'center', alignItems: 'center'}}>
+                <ActivityIndicator size='large' color='black' />
+            </View>:
+
+            <View style={styles.container}>
+                        
             <View style={{flexDirection: 'row'}}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconContainer}>
                     <MaterialCommunityIcons style={styles.icon} name="keyboard-backspace" size={32} color="black" />
@@ -167,15 +148,22 @@ const signin = ({navigation}) => {
                     <Text style={styles.signinText}>Sign In</Text>
                 </View>
                 <View style={styles.formContainer}>
-                    <TextInput placeholder='Email or Phone Number' 
+                    <TextInput placeholder='Email' 
                         style={{...styles.textInput}}
+                        keyboardType={'email-address'}
+                        autoCapitalize='none'
+                        onChangeText={(e) => setEmail(e)}
+                        value={email}
                     />
                     <TextInput placeholder='Password'
                         secureTextEntry={true}
                         style={{...styles.textInput}}
+                        autoCapitalize='none'
+                        onChangeText={(e) => setPassword(e)}
+                        value={password}
                     />
                     
-                    <TouchableOpacity onPress={auth} style={styles.loginContainer}>
+                    <TouchableOpacity onPress={loginEmail} style={styles.loginContainer}>
                         <Text style={styles.loginText}>Log In</Text>
                     </TouchableOpacity>
 
@@ -187,18 +175,19 @@ const signin = ({navigation}) => {
 
                 <View>
                 <SocialIcon
-                        // light
-                        // raised={true}
-                        title='Sign In With Google'
-                        button
-                        type='google'
-                        style={styles.googleButton}
-                        // onPress={onSignIn}
-                        onPress={signInWithGoogleAsync}
-                    />
+                    // light
+                    // raised={true}
+                    title='Sign In With Google'
+                    button
+                    type='google'
+                    style={styles.googleButton}
+                    onPress={signInWithGoogleAsync}
+                />
                 </View>
             </View>
-        </View>
+            </View>
+        }
+        </>
     );
 }
 

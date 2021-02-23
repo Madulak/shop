@@ -1,21 +1,59 @@
-import React, { useRef, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, ScrollView, Dimensions, Animated } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, ScrollView, Dimensions, Animated, ActivityIndicator, InteractionManager } from 'react-native';
 
-import Category from '../components/UI/category';
-import Arrival from '../components/UI/arrival';
+import Category from '../components/categories';
+import NewArrival from '../components/newArrivals';
 import Featured from '../components/featured';
+import BestSeller from '../components/bestSeller';
 import { categories, arivals } from '../data';
 import Modal from './modal';
 
-const { width, height } = Dimensions.get('window');
-const ITEM_SIZE = width * 0.72;
-const SPACER_ITEM_SIZE = (width - ITEM_SIZE) / 2;
+import { firebase } from '../config';
 
 const homescreen = ({navigation}) => {
 
-    const scrollX = useRef(new Animated.Value(0)).current;
-    const data = [{key: 'left-spacer'}, ...arivals, {key: 'right-spacker'}];
+    
     const [modal, setModal] = useState(false);
+    const [products, setProducts] = useState()
+    const [featured, setFeatured] = useState();
+    
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        setLoading(true)
+
+        let unsubscribe;
+        InteractionManager.runAfterInteractions(() => {
+            unsubscribe = firebase.firestore().collection('products').limit(3).onSnapshot(snapshot => {
+            
+                setProducts(snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    product: doc.data()})))
+            }) 
+            setLoading(false);
+        })
+        return () => {
+            unsubscribe ();
+        }
+    },[ ]);
+
+    useEffect(() => {
+        setLoading(true)
+        let unsubscribe;
+        unsubscribe = firebase.firestore().collection('products').orderBy('category','desc').limit(3).onSnapshot(snapshot => {
+            
+            setFeatured(snapshot.docs.map(doc => ({
+                id: doc.id,
+                product: doc.data()})))
+        }) 
+        setLoading(false);
+        return () => {
+            unsubscribe ();
+        }
+    },[ ]);
+
+    console.log(loading)
+    // console.log('[PRODUCTS] ', products ? products : 'one of ' )
 
     const modalHandler = () => {
         setModal(state => !state);
@@ -27,112 +65,46 @@ const homescreen = ({navigation}) => {
     }
 
     return (
-        <FlatList
-            ListHeaderComponent={
-                <View style={styles.container}>
-                    {/* <ScrollView> */}
-                        <FlatList
-                            listKey='categories'
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            data={categories}
-                            keyExtractor={item => item.category}
-                            renderItem={({item}) => {
-                                return (
-                                    <Category image={item.categoryPic} name={item.category} />
-                                );
-                            }}
-                        />
+        <>
+            {products ? 
+                <FlatList
+                ListHeaderComponent={
+                    <View style={styles.container}>
+                            {loading === true ? 
+                            <View style={{...styles.container, justifyContent: 'center', alignItems: 'center'}}>
+                                <ActivityIndicator size='large' color='black' />
+                            </View>: 
+                            <>
+                                <Category />
+    
+                                <Modal goToCart={goToCart} modalHandler={modalHandler} modals={modal} />
+    
+                                <View style={styles.arrivalContainer}>
+                                    <Text style={styles.arrivalText}>New Arrivals</Text>
+                                </View>
+    
+                                <NewArrival images={products && products } arivals={arivals} />
+    
+                                <View style={styles.featuredContainer}>
+                                    <Text style={styles.featuredText}>Featured</Text>
+                                </View>
+                                <Featured images={featured && featured } modalHandler={modalHandler} arivals={arivals} />
+    
+                                <View style={styles.featuredContainer}>
+                                    <Text style={styles.featuredText}>best seller</Text>
+                                </View>
+    
+                                <BestSeller images={featured && featured }  arivals={arivals} />
+                            </>}
+                    </View>
+                }
+            />:
 
-                        <Modal goToCart={goToCart} modalHandler={modalHandler} modals={modal} />
-
-                        <View style={styles.arrivalContainer}>
-                            <Text style={styles.arrivalText}>New Arrivals</Text>
-                        </View>
-
-                        <Animated.FlatList 
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            data={data}
-                            keyExtractor={item => item.price}
-                            snapToInterval={ITEM_SIZE}
-                            decelerationRate={0}
-                            bounces={false}
-                            scrollEventThrottle={16}
-                            onScroll={Animated.event(
-                                [{ nativeEvent: {contentOffset: {x: scrollX}}}],
-                                { useNativeDriver: true}
-                            )}
-                            renderItem={({item, index}) => {
-
-                                if (!item.image) {
-                                    return(<View 
-                                        style={{
-                                            width: SPACER_ITEM_SIZE
-                                        }}
-                                    />)
-                                }
-
-                                const inputRange = [
-                                    // (index -2 ) * ITEM_SIZE,
-                                    (index -2 ) * ITEM_SIZE,
-                                    (index - 1) * ITEM_SIZE,
-                                    index * ITEM_SIZE,
-                                ]
-
-                                const translateY = scrollX.interpolate({
-                                    inputRange,
-                                    outputRange: [ .9, 1, .9]
-                                })
-
-                                return (
-                                    <View style={{width: ITEM_SIZE, height: width > 350 ? height * 0.60: 300 }}>
-                                        <Arrival price={item.price} translateY={translateY} image={item.image} />
-                                    </View>
-                                );
-                            }}
-                        />
-
-                        <View style={styles.featuredContainer}>
-                            <Text style={styles.featuredText}>Featured</Text>
-                        </View>
-
-                        <FlatList 
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            data={arivals}
-                            keyExtractor={item => item.price}
-                            listKey='featured'
-                            renderItem={({item}) => {
-
-                                return (
-                                    <Featured modalHandler={modalHandler} image={item.image} price={item.price} />
-                                );
-                            }}
-                        />
-
-
-                        <View style={styles.featuredContainer}>
-                            <Text style={styles.featuredText}>best seller</Text>
-                        </View>
-
-                        <FlatList 
-                            listKey='best seller'
-                            numColumns={2}
-                            showsHorizontalScrollIndicator
-                            data={arivals}
-                            keyExtractor={item => item.image}
-                            renderItem={({item}) => {
-
-                                return (
-                                    <Featured best={'best'} image={item.image} price={item.price} />
-                                );
-                            }}
-                        />
-                    {/* </ScrollView> */}
-                </View>
+            <View style={{flex: 1, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center'}}>
+                <ActivityIndicator size='large' color='black' />
+            </View>
             }
-        />
+        </>
     )
 }
 
@@ -143,7 +115,7 @@ const styles = StyleSheet.create({
         
     },
     arrivalContainer: {
-        marginVertical: 20,
+        marginTop: 20,
         alignItems: 'center',
     },
     arrivalText: {

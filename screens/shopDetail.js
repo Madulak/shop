@@ -1,26 +1,61 @@
-import React from 'react';
-import { View, Text, StyleSheet, Dimensions, FlatList } from 'react-native';
-import Featured from '../components/featured';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Dimensions, FlatList, ActivityIndicator } from 'react-native';
+import Featured from '../components/UI/featured';
 import { arivals } from '../data';
+import { firebase } from '../config';
 
-const shopDetail = () => {
+const shopDetail = ({route}) => {
+
+    const { id } = route.params;
+    const [products, setProducts] = useState()
+
+    useEffect(() => {
+        // setLoading(true)
+        let unsubscribe;
+        unsubscribe = firebase.firestore().collection('products').where('category', '==', id).onSnapshot(snapshot => {
+            
+            setProducts(snapshot.docs.map(doc => ({
+                id: doc.id,
+                product: doc.data()})))
+        }) 
+        // setLoading(false);
+        return () => {
+            unsubscribe ();
+        }
+    },[ ]);
+
+    
 
     return (
-        <View style={styles.container}>
-            <FlatList 
-                listKey='best seller'
-                numColumns={2}
-                showsHorizontalScrollIndicator
-                data={arivals}
-                keyExtractor={item => item.image}
-                renderItem={({item}) => {
-
-                    return (
-                        <Featured best={'best'} image={item.image} price={item.price} />
-                    );
-                }}
-            />
-        </View>
+        <>
+            {products ? 
+                <>
+                    {products.length === 0 ?
+                        <View style={{...styles.container, justifyContent: 'center',alignItems: 'center'}}>
+                            <Text>No Products yet</Text>
+                        </View> :
+                        <View style={styles.container}>
+                        <FlatList 
+                            listKey='best seller'
+                            numColumns={2}
+                            showsHorizontalScrollIndicator
+                            data={products}
+                            keyExtractor={item => item.id}
+                            renderItem={({item}) => {
+            
+                                return (
+                                    <Featured best={'best'} image={item.product.images[0]} price={item.product.price} />
+                                );
+                            }}
+                        />
+                    </View>
+                    }
+                </>:
+                <View style={{...styles.container, justifyContent: 'center',alignItems: 'center'}}>
+                    <ActivityIndicator size='large' color='black' />
+                </View>
+            }
+        </>
     );
 }
 

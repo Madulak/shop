@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
-const drawerIcon = ({icon, name, navigate}) => {
+const drawerIcon = ({icon, name, navigate, logout}) => {
 
     return (
-        <TouchableOpacity onPress={navigate} style={styles.container}>
+        <TouchableOpacity onPress={navigate ? navigate : logout} style={styles.container}>
             <View>
                 {icon}
             </View>

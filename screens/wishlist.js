@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Dimensions, FlatList } from 'react-native';
-import Featured from '../components/featured';
+import Featured from '../components/UI/featured';
 import { arivals } from '../data';
 
 const { width, height } = Dimensions.get('window');

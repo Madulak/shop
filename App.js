@@ -7,13 +7,14 @@ import { Provider } from 'react-redux';
 import ReduxThunk from 'redux-thunk';
 
 import Auth from './store/reducer/auth';
+import { enableScreens } from 'react-native-screens';
 
-import firebase from 'firebase';
-import { firebaseConfig } from './config';
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig)
-}
-
+// import firebase from 'firebase';
+// import { firebaseConfig } from './config';
+// if (!firebase.apps.length) {
+//   firebase.initializeApp(firebaseConfig)
+// }
+enableScreens();
 
 const root = combineReducers({
   auth: Auth

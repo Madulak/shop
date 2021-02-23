@@ -7,8 +7,8 @@ const { width, height } = Dimensions.get('window');
 
 const shop = ({navigation}) => {
 
-    const navigateDetail = () => {
-        navigation.navigate('shop detail')
+    const navigateDetail = (id) => {
+        navigation.navigate('shop detail', {id: id})
     }
 
     return (
@@ -21,7 +21,7 @@ const shop = ({navigation}) => {
                         <CategoryCard 
                             text={item.category}
                             image={item.categoryPic}
-                            navigateDetail={navigateDetail}
+                            navigateDetail={() => navigateDetail(item.category)}
                         />
                     );
                 }}

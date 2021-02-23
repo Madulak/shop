@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Alert } from 'react-native';
 import DrawerIcon from './components/UI/drawerIcon';
 
 import { AntDesign } from '@expo/vector-icons';
@@ -9,9 +9,34 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { EvilIcons } from '@expo/vector-icons';
 import { SimpleLineIcons } from '@expo/vector-icons';
 
+import { useDispatch } from 'react-redux';
+import * as authActions from './store/actions/auth';
+
 const drawerContent = (props) => {
 
     // console.log('[PROPS] ', supers)
+    const dispatch = useDispatch();
+
+    const logoutHandler = () => {
+        
+       
+        Alert.alert(
+        "Logout",
+        "Are you sure You want to Logout",
+        [
+            {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel"
+            },
+            { text: "OK", onPress: () => dispatch(authActions.logout()) }
+        ],
+        { cancelable: false }
+        );
+
+        props.navigation.toggleDrawer();
+
+    }
 
     return (
         <View style={styles.container}>
@@ -57,6 +82,7 @@ const drawerContent = (props) => {
             />
 
             <DrawerIcon 
+                logout={logoutHandler}
                 name={'Logout'}
                 icon={<AntDesign name="logout" size={24} color="black" />}
             />

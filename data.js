@@ -9,19 +9,19 @@ import { Ionicons } from '@expo/vector-icons';
 export const categories = [
     {
         
-        category: 'Jewellary',
+        category: 'jewellary',
         categoryPic: require('./assets/pexels-javon-swaby-2783873.jpg')
     },
     {
-        category: 'Clothing',
+        category: 'clothing',
         categoryPic: require('./assets/pexels-javon-swaby-2783873.jpg')
     },
     {
-        category: 'Dresses',
+        category: 'sresses',
         categoryPic: require('./assets/pexels-javon-swaby-2783873.jpg')
     },
     {
-        category: 'Shoes',
+        category: 'shoes',
         categoryPic: require('./assets/pexels-javon-swaby-2783873.jpg')
     },
 ]

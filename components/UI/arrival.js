@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, Dimensions, Image, Animated } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, Dimensions, Image, Animated, View } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -8,9 +8,11 @@ const arrival = ({image, translateY, price}) => {
     return (
         <Animated.View style={{...styles.container, transform: [{scale: translateY}]}}>
             <TouchableOpacity style={styles.imageContainer}>
-                <Image style={styles.image} resizeMode='cover' source={image} />
+                <Image style={styles.image} resizeMode='cover' source={{uri: image}} />
             </TouchableOpacity>
-            {/* <Text>{price}</Text> */}
+            {/* <View style={styles.priceContainer}>
+                <Text>{price}</Text>
+            </View> */}
         </Animated.View>
     );
 }
@@ -28,6 +30,7 @@ const styles = StyleSheet.create({
         shadowColor: 'black',
         shadowOpacity: 0.2,
         elevation: 10,
+        flex: 1,
     },
     image: {
         width: '100%',
@@ -39,6 +42,9 @@ const styles = StyleSheet.create({
         fontSize: 18,
         alignSelf: 'center',
         marginVertical: 10,
+    },
+    priceContainer: {
+        // flex: 0.1
     }
 })
 
