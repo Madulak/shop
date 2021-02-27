@@ -1,14 +1,50 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions, ScrollView, TextInput } from 'react-native';
+import NextButton from '../../components/UI/nextButton';
 import { Octicons } from '@expo/vector-icons';
+
+import { useDispatch } from 'react-redux';
+import * as productAction from '../../store/actions/productActions';
 
 const { width, height } = Dimensions.get('window');
 
 const shippingAddress = () => {
 
+    const dispatch = useDispatch();
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [address, setAddress] = useState('');
+    const [city, setCity] = useState('');
+    const [state, setState] = useState('');
+    const [zip, setZip] = useState('');
+    const [color, setColor] = useState('black');
+
+    useEffect(() => {
+        if (name !== '' && email !== '' && address !== '' && city !== '' && state !== '' && zip !== '') {
+            setColor('green')
+        } else {
+            setColor('black')
+        }
+    },[zip, name, email, address, city, state])
+
+    const add_address = () => {
+        const data = {
+            name,
+            email,
+            address,
+            city,
+            state,
+            zip
+        }
+        if (name !== '' && email !== '' && address !== '' && city !== '' && state !== '' && zip !== '') {
+            dispatch(productAction.add_address(data))
+        }
+    }
+
     return (
         <View style={styles.container}>
             {/* <Text>Shipping</Text> */}
+            
             <ScrollView contentContainerStyle={{paddingBottom: 20}}>
 
                 <View style={styles.headerContainer}>
@@ -23,28 +59,47 @@ const shippingAddress = () => {
                     <Text style={styles.shippingText}>Shipping Address</Text>
 
                     <View style={styles.inputContainer}>
-                        <TextInput style={styles.input} placeholder='Name' />
+                        <TextInput value={name} 
+                            onChangeText={(e) => setName(e)} style={styles.input} 
+                            placeholder='Name' 
+                        />
                     </View>
                     <View style={styles.inputContainer}>
-                        <TextInput style={styles.input} placeholder='Email' />
+                        <TextInput style={styles.input} placeholder='Email' 
+                            onChangeText={e => setEmail(e)}
+                            value={email}
+                        />
                     </View>
 
                     <View style={styles.inputContainer}>
-                        <TextInput style={styles.input} placeholder='Address' />
+                        <TextInput style={styles.input} placeholder='Address' 
+                            onChangeText={e => setAddress(e)}
+                            value={address}
+                        />
                     </View>
                     <View style={styles.inputContainer}>
-                        <TextInput style={styles.input} placeholder='City' />
+                        <TextInput style={styles.input} placeholder='City' 
+                            onChangeText={e => setCity(e)}
+                            value={city}
+                        />
                     </View>
 
                     <View style={styles.inputContainer}>
-                        <TextInput style={styles.input} placeholder='State' />
+                        <TextInput style={styles.input} placeholder='State' 
+                            onChangeText={e => setState(e)}
+                            value={state}
+                        />
                     </View>
                     <View style={styles.inputContainer}>
-                        <TextInput style={styles.input} placeholder='Zip Code' />
+                        <TextInput style={styles.input} placeholder='Zip Code' 
+                            onChangeText={e => setZip(e)}
+                            value={zip}
+                        />
                     </View>
 
                 </View>
 
+                <NextButton color={color} add_address={add_address} />
             </ScrollView>
         </View>
     );

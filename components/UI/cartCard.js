@@ -12,7 +12,7 @@ const cartCard = ({image, price, dress}) => {
         <View style={styles.container}>
             <TouchableOpacity style={styles.imageContainer}>
                 <Image 
-                    source={image}
+                    source={{uri: image}}
                     style={styles.image}
                     resizeMode='cover'
                 />

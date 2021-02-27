@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator, HeaderTitle } from '@react-navigation/stack';
 
 import Homescreen from './screens/homescreen';
 import Auth from './screens/auth/auth';
@@ -20,6 +20,8 @@ import PaymentMethod from './screens/checkoutProcess/paymentMethod';
 import AddCard from './screens/checkoutProcess/addCard';
 import ShippingUI from './components/UI/ShippingUI';
 import Checkout from './screens/checkoutProcess/checkout';
+import DetailProduct from './screens/detailProduct';
+import HeaderCart from './components/UI/headerCart';
 
 import DrawerContent from './drawerContent';
 
@@ -35,6 +37,9 @@ const mainNavigation = () => {
     const isOnboarding = useSelector(state => state.auth.isOnboarding);
 
     const HomeScreens = ({navigation}) => {
+
+
+
         return (
             <Stack.Navigator screenOptions={{headerLeft: () => (
                 <View>
@@ -42,7 +47,7 @@ const mainNavigation = () => {
                 </View>
                 ),
                 headerRight: () => (
-                    <FontAwesome style={{marginRight: 20}} name="shopping-bag" size={24} color="black" />
+                    <HeaderCart go_to_cart={() => navigation.navigate('shopping bag')} />
                 )}}>
 
                 <Stack.Screen  name='Shopertino' component={Homescreen} /> 
@@ -135,29 +140,31 @@ const mainNavigation = () => {
 
                 <Stack.Screen options={({navigation}) => 
                     ({headerLeft: () => (<ShippingUI cancel={() => navigation.goBack()} name='Cancel' />), 
-                    headerRight: () => (<ShippingUI next={() => navigation.navigate('payment method')} name='Next' />), headerTitle: ''})} 
+                    headerRight: () => (<ShippingUI next={() => navigation.navigate('payment method')} name='2 of 4' />), headerTitle: ''})} 
                     name='shipping method' component={ShippingMethod} 
                 />
 
                 <Stack.Screen options={({navigation}) => 
                     ({headerLeft: () => (<ShippingUI cancel={() => navigation.goBack()} name='Cancel' />), 
-                    headerRight: () => (<ShippingUI next={() => navigation.navigate('checkout')} name='Next' />), headerTitle: ''})} name='payment method' 
+                    headerRight: () => (<ShippingUI next={() => navigation.navigate('checkout')} name='3 of 4' />), headerTitle: ''})} name='payment method' 
                     component={PaymentMethod} 
                 />
 
                 <Stack.Screen options={({navigation}) => 
                     ({headerLeft: () => (<ShippingUI name='Cancel' cancel={() => navigation.goBack()} />), 
-                    headerRight: () => (<ShippingUI next={() => navigation.navigate('shipping method')} name='Next' />), 
+                    headerRight: () => (<ShippingUI next={() => navigation.navigate('shipping method')} name='1 of 4' />), 
                     headerTitle: ''})} name='shipping' component={ShippingAddress} 
                 />
                 
-                <Stack.Screen options={{headerLeft: () => (<ShippingUI  name='Cancel' />), headerRight: () => (<ShippingUI name='Next' />), headerTitle: ''}} name='add card' component={AddCard} />
+                <Stack.Screen name='add card' component={AddCard} />
                 
-                <Stack.Screen name='shop detail' component={ShopDetail} />
+                <Stack.Screen options={({route}) => ({title: route.params.id})} name='shop detail' component={ShopDetail} />
 
                 <Stack.Screen name='shopping bag' component={Cart} />
 
                 <Stack.Screen name='checkout' component={Checkout} />
+
+                <Stack.Screen name='detail product' component={DetailProduct} options={{headerShown: false}} />
                 
             </Stack.Navigator>
         )

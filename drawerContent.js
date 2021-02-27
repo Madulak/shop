@@ -34,8 +34,6 @@ const drawerContent = (props) => {
         { cancelable: false }
         );
 
-        props.navigation.toggleDrawer();
-
     }
 
     return (
@@ -53,7 +51,7 @@ const drawerContent = (props) => {
             />
 
             <DrawerIcon 
-                
+                navigate={() => props.navigation.navigate('shopping bag')}
                 name={'Bag'}
                 icon={<SimpleLineIcons name="bag" size={24} color="black" />}
             />

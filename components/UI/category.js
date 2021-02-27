@@ -2,11 +2,11 @@ import React from 'react';
 import { View, Text, StyleSheet, ImageBackground, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
-const category = ({image, name}) => {
+const category = ({image, name, navigateDetail}) => {
 
     return (
         
-            <TouchableOpacity>
+            <TouchableOpacity onPress={navigateDetail}>
                 <ImageBackground imageStyle={{borderRadius: 5,}} resizeMode='cover' style={styles.container} source={image} >
                     <Text style={styles.textName}>{name}</Text>
                     <LinearGradient

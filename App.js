@@ -7,6 +7,7 @@ import { Provider } from 'react-redux';
 import ReduxThunk from 'redux-thunk';
 
 import Auth from './store/reducer/auth';
+import ProductReducer from './store/reducer/productReducer';
 import { enableScreens } from 'react-native-screens';
 
 // import firebase from 'firebase';
@@ -17,7 +18,8 @@ import { enableScreens } from 'react-native-screens';
 enableScreens();
 
 const root = combineReducers({
-  auth: Auth
+  auth: Auth,
+  product: ProductReducer
 })
 
 const store = createStore(root, applyMiddleware(ReduxThunk));

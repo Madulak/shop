@@ -3,7 +3,7 @@ import { FlatList, } from 'react-native';
 import Category from './UI/category';
 import { categories } from '../data';
 
-const categoriesComp = () => {
+const categoriesComp = ({navigateDetail}) => {
 
     return (
         <FlatList
@@ -14,7 +14,7 @@ const categoriesComp = () => {
             keyExtractor={item => item.category}
             renderItem={({item}) => {
                 return (
-                    <Category image={item.categoryPic} name={item.category} />
+                    <Category navigateDetail={() => navigateDetail(item.category)} image={item.categoryPic} name={item.category} />
                 );
             }}
         />

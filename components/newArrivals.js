@@ -6,7 +6,7 @@ const { width, height } = Dimensions.get('window');
 const ITEM_SIZE = width * 0.72;
 const SPACER_ITEM_SIZE = (width - ITEM_SIZE) / 2;
 
-const newArrivals = ({arivals, images}) => {
+const newArrivals = ({arivals, images, go_to_detail}) => {
 
     const scrollX = useRef(new Animated.Value(0)).current;
 
@@ -16,7 +16,7 @@ const newArrivals = ({arivals, images}) => {
    }
 
     // console.log('[IMAGES] ', images)
-    console.log('[data] ', data);
+    // console.log('[data] ', data);
     
     return ( 
         <>
@@ -59,7 +59,7 @@ const newArrivals = ({arivals, images}) => {
     
                     return (
                         <View style={{width: ITEM_SIZE, height: width > 350 ? height * 0.60: 300 }}>
-                            <Arrival price={item.product.price} translateY={translateY} image={item.product.images[1]} />
+                            <Arrival go_to_detail={() => go_to_detail(item.id)} price={item.product.price} translateY={translateY} image={item.product.images[1]} />
                         </View>
                     );
                 }}

@@ -5,18 +5,26 @@ import {
   StyleSheet,
   View
 } from 'react-native';
-import CreditCard from 'react-native-credit-card-form-ui';
-import CreditCardDisplay from 'react-native-credit-card-display';
 import { CreditCardInput, LiteCreditCardInput } from "react-native-credit-card-fullpage-form";
+import { useDispatch } from 'react-redux';
+import * as productActions from '../../store/actions/productActions';
 
-
-const addCard = () => {
+const addCard = ({navigation}) => {
 
     const [number, setNumber] = useState(0);
+    const dispatch = useDispatch();
+
+    const submit = (data) => {
+      if(data.valid){
+        console.log(data);
+        // dispatch(productActions.add_card(data.values));
+        navigation.navigate('checkout');
+      }
+    }
  
     return (
         <View style={styles.container}>
-            <CreditCardInput  />
+            <CreditCardInput onChange={(data) => submit(data)}  />
         </View>
       );
 }

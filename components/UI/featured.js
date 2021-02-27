@@ -3,10 +3,10 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions  } from 're
 
 const { width, height } = Dimensions.get('window')
 
-const featured = ({image, price, best, modalHandler, name}) => {
+const featured = ({image, price, best, go_to_detail, name, }) => {
 
     return (
-        <TouchableOpacity onPress={modalHandler} style={{...styles.container, margin: best ? 5: 10}}>
+        <TouchableOpacity onPress={go_to_detail} style={{...styles.container, margin: best ? 5: 10}}>
             
                 <Image style={styles.image} resizeMode='cover' source={{uri: image}} />
                 <View style={styles.priceContainer}>

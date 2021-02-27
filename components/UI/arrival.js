@@ -3,11 +3,11 @@ import { TouchableOpacity, Text, StyleSheet, Dimensions, Image, Animated, View }
 
 const { width, height } = Dimensions.get('window');
 
-const arrival = ({image, translateY, price}) => {
+const arrival = ({image, translateY, price, go_to_detail}) => {
 
     return (
         <Animated.View style={{...styles.container, transform: [{scale: translateY}]}}>
-            <TouchableOpacity style={styles.imageContainer}>
+            <TouchableOpacity onPress={go_to_detail} style={styles.imageContainer}>
                 <Image style={styles.image} resizeMode='cover' source={{uri: image}} />
             </TouchableOpacity>
             {/* <View style={styles.priceContainer}>

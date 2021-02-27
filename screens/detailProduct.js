@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, Modal, Button, Dimensions, Image, TouchableOpacity } from 'react-native';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -8,28 +8,51 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { useDispatch } from 'react-redux';
 import * as productActions from '../store/actions/productActions';
+import { firebase } from '../config';
 
 const { width, height } = Dimensions.get('window');
 
-const modal = ({modals, modalHandler, goToCart}) => {
+const modal = ({route, navigation}) => {
 
-    const isCarousel = React.useRef(null);
-    const [index, setIndex] = React.useState(0)
+    const isCarousel = useRef(null);
+    const [index, setIndex] = useState(0)
+    const [data, setData] = useState()
 
+    const { id } = route.params;
     const dispatch = useDispatch();
     const SLIDER_WIDTH = Dimensions.get('window').width 
     const ITEM_WIDTH = Math.round(SLIDER_WIDTH )
 
+    useEffect(() => {
+        get_single_product();
+    },[])
+
+    const get_single_product = async () => {
+        
+        try {
+            await firebase.firestore().collection('products').doc(id).onSnapshot(snapshot => (
+                setData(snapshot.data())
+            ))  
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }  
+    
     const add_to_cart_Handler = () => {
-        dispatch(productActions.add_to_cart())
+        dispatch(productActions.add_to_cart(data))
+    }
+
+    const go_to_cart_screen = () => {
+        navigation.navigate('shopping bag')
     }
 
     const CarouselCardItem = ({item, index}) => {
         return (
             <View key={item.price} style={styles.imageContainer}>
-                <Image resizeMode='cover' style={styles.image} source={item.image} />
+                <Image resizeMode='cover' style={styles.image} source={{uri: item}} />
                 <Pagination
-                    dotsLength={arivals.length}
+                    dotsLength={data.images.length}
                     activeDotIndex={index}
                     carouselRef={isCarousel}
                     dotStyle={{
@@ -55,7 +78,7 @@ const modal = ({modals, modalHandler, goToCart}) => {
                 />
 
                     <View style={styles.closeContainer}>
-                        <TouchableOpacity onPress={modalHandler} style={styles.button}>
+                        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.button}>
                             <Entypo name="chevron-thin-down" size={24} color="white" />
                         </TouchableOpacity>
                         
@@ -74,17 +97,16 @@ const modal = ({modals, modalHandler, goToCart}) => {
     }
 
     return (
-        <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modals}
-        >
-            <View style={styles.container}>
+        
+            <>
+                {data && 
+                
+                <View style={styles.container}>
                 <Carousel
                     layout='stack'
                     layoutCardOffset={2}
                     ref={isCarousel}
-                    data={arivals}
+                    data={data.images && data.images}
                     renderItem={CarouselCardItem}
                     sliderWidth={SLIDER_WIDTH}
                     itemWidth={ITEM_WIDTH}
@@ -96,8 +118,8 @@ const modal = ({modals, modalHandler, goToCart}) => {
                 />
 
                 <View style={styles.priceContainer}>
-                    <Text style={styles.description}>Katie Ruched Tube Top</Text>
-                    <Text style={styles.priceText}>R 900.00</Text>
+                    <Text style={styles.description}>{data.name}</Text>
+                    <Text style={styles.priceText}>R {data.price}.00</Text>
                 </View>
                 
                 <View style={styles.buttonContainer}>
@@ -105,13 +127,15 @@ const modal = ({modals, modalHandler, goToCart}) => {
                         <Text style={{color: 'white',}}>Add To Bag</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={goToCart} style={{...styles.cartContainer, ...styles.goCart}}>
+                    <TouchableOpacity onPress={go_to_cart_screen}  style={{...styles.cartContainer, ...styles.goCart}}>
                         <Text style={{color: 'darkgray'}}>Go to Cart</Text>
                     </TouchableOpacity>
                 </View>
                 
             </View>
-        </Modal>
+                }
+
+            </>
     );
 }
 

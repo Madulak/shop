@@ -2,7 +2,7 @@ import React from 'react';
 import { FlatList } from 'react-native';
 import Featured from './UI/featured';
 
-const bestSeller = ({arivals, images}) => {
+const bestSeller = ({go_to_detail, images}) => {
 
     return (
         <>
@@ -16,7 +16,7 @@ const bestSeller = ({arivals, images}) => {
                     renderItem={({item}) => {
         
                         return (
-                            <Featured best={'best'} image={item.product.images[0]} price={'item.price'} />
+                            <Featured go_to_detail={() => go_to_detail(item.id)} best={'best'} image={item.product.images[0]} price={item.product.price} />
                         );
                     }}
                 />

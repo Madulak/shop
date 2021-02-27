@@ -42,14 +42,7 @@ const signin = ({navigation}) => {
 
     const checkIfLoggedIn = () => {
         setLoading(true);
-        firebase.auth().onAuthStateChanged(function(user) {
-            if (user) {
-                console.log('[LOGGED IN] ', user);
-                auth()
-            } else {
-                console.log('[NOT LOGGED IN] ')
-            }
-        }) 
+        dispatch(authActions.auto_login())
         setLoading(false);
     }
 

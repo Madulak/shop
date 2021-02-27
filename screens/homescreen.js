@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, ScrollView, Dimensions, Animated, ActivityIndicator, InteractionManager } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator, InteractionManager } from 'react-native';
 
 import Category from '../components/categories';
 import NewArrival from '../components/newArrivals';
@@ -8,11 +8,13 @@ import BestSeller from '../components/bestSeller';
 import { categories, arivals } from '../data';
 import Modal from './modal';
 
+import { useSelector } from 'react-redux';
 import { firebase } from '../config';
 
 const homescreen = ({navigation}) => {
 
-    
+    const isAuth = useSelector(state => state.auth.userId);
+    console.log('[AUTH ___ USER] ', isAuth);
     const [modal, setModal] = useState(false);
     const [products, setProducts] = useState()
     const [featured, setFeatured] = useState();
@@ -59,46 +61,54 @@ const homescreen = ({navigation}) => {
         setModal(state => !state);
     }
 
+    const go_to_detail_product = (id) => {
+        navigation.navigate('detail product', { id: id})
+    }
+
     const goToCart = () => {
         setModal(state => !state);
         navigation.navigate('shopping bag');
+    }
+
+    const navigateDetail = (id) => {
+        navigation.navigate('shop detail', {id: id})
     }
 
     return (
         <>
             {products ? 
                 <FlatList
-                ListHeaderComponent={
-                    <View style={styles.container}>
-                            {loading === true ? 
-                            <View style={{...styles.container, justifyContent: 'center', alignItems: 'center'}}>
-                                <ActivityIndicator size='large' color='black' />
-                            </View>: 
-                            <>
-                                <Category />
-    
-                                <Modal goToCart={goToCart} modalHandler={modalHandler} modals={modal} />
-    
-                                <View style={styles.arrivalContainer}>
-                                    <Text style={styles.arrivalText}>New Arrivals</Text>
-                                </View>
-    
-                                <NewArrival images={products && products } arivals={arivals} />
-    
-                                <View style={styles.featuredContainer}>
-                                    <Text style={styles.featuredText}>Featured</Text>
-                                </View>
-                                <Featured images={featured && featured } modalHandler={modalHandler} arivals={arivals} />
-    
-                                <View style={styles.featuredContainer}>
-                                    <Text style={styles.featuredText}>best seller</Text>
-                                </View>
-    
-                                <BestSeller images={featured && featured }  arivals={arivals} />
-                            </>}
-                    </View>
-                }
-            />:
+                    ListHeaderComponent={
+                        <View style={styles.container}>
+                                {loading === true ? 
+                                <View style={{...styles.container, justifyContent: 'center', alignItems: 'center'}}>
+                                    <ActivityIndicator size='large' color='black' />
+                                </View>: 
+                                <>
+                                    <Category navigateDetail={navigateDetail} />
+        
+                                    <Modal goToCart={goToCart} modalHandler={modalHandler} modals={modal} />
+        
+                                    <View style={styles.arrivalContainer}>
+                                        <Text style={styles.arrivalText}>New Arrivals</Text>
+                                    </View>
+        
+                                    <NewArrival images={products && products } go_to_detail={go_to_detail_product} arivals={arivals} />
+        
+                                    <View style={styles.featuredContainer}>
+                                        <Text style={styles.featuredText}>Featured</Text>
+                                    </View>
+                                    <Featured images={featured && featured } go_to_detail={go_to_detail_product} arivals={arivals} />
+        
+                                    <View style={styles.featuredContainer}>
+                                        <Text style={styles.featuredText}>best seller</Text>
+                                    </View>
+        
+                                    <BestSeller images={featured && featured } go_to_detail={go_to_detail_product}  arivals={arivals} />
+                                </>}
+                        </View>
+                    }
+                />:
 
             <View style={{flex: 1, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center'}}>
                 <ActivityIndicator size='large' color='black' />

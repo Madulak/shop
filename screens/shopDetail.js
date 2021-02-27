@@ -4,10 +4,14 @@ import Featured from '../components/UI/featured';
 import { arivals } from '../data';
 import { firebase } from '../config';
 
-const shopDetail = ({route}) => {
+const shopDetail = ({route, navigation}) => {
 
     const { id } = route.params;
-    const [products, setProducts] = useState()
+    const [products, setProducts] = useState();
+
+    const go_to_detail_product = (id) => {
+        navigation.navigate('detail product', { id: id})
+    }
 
     useEffect(() => {
         // setLoading(true)
@@ -44,7 +48,11 @@ const shopDetail = ({route}) => {
                             renderItem={({item}) => {
             
                                 return (
-                                    <Featured best={'best'} image={item.product.images[0]} price={item.product.price} />
+                                    <Featured best={'best'} 
+                                        image={item.product.images[0]} 
+                                        price={item.product.price} 
+                                        go_to_detail={() => go_to_detail_product(item.id)}
+                                    />
                                 );
                             }}
                         />

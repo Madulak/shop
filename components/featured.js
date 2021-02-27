@@ -3,7 +3,7 @@ import { FlatList } from 'react-native';
 
 import Featured from '../components/UI/featured';
 
-const featured = ({arivals, modalHandler, images}) => {
+const featured = ({go_to_detail, modalHandler, images}) => {
 
     
 
@@ -14,12 +14,12 @@ const featured = ({arivals, modalHandler, images}) => {
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 data={images}
-                keyExtractor={item => item.price}
+                keyExtractor={item => item.id}
                 listKey='featured'
                 renderItem={({item}) => {
     
                     return (
-                        <Featured modalHandler={modalHandler} image={item.product.images[1]} price={item.product.price} name={item.product.name} />
+                        <Featured go_to_detail={() => go_to_detail(item.id)} image={item.product.images[1]} price={item.product.price} name={item.product.name} />
                     );
                 }}
             />

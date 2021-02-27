@@ -1,11 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { Octicons } from '@expo/vector-icons';
 import { Touchable } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+import { useDispatch } from 'react-redux';
+import * as productActions from '../../store/actions/productActions';
 
 const { width, height } = Dimensions.get('window');
 
-const shippingMethod = () => {
+const shippingMethod = ({navigation}) => {
+
+    const [free, setFree] = useState(true);
+    const dispatch = useDispatch();
+
+    const setShippingMethod = (id, method) => {
+        navigation.navigate('payment method')
+        setFree(id)
+        dispatch(productActions.add_shipping_method(method));
+    }
+
+    
 
     return (
         <View style={styles.container}>
@@ -21,23 +35,33 @@ const shippingMethod = () => {
                     <Text style={styles.shippingText}>Shipping Method</Text>
                 </View>
                 
-                <TouchableOpacity style={styles.buttonContainer}>
+                <TouchableOpacity onPress={() => setShippingMethod(true, 'UPS Ground')} style={styles.buttonContainer}>
                     <View>
                         <Text style={styles.boldText}>UPS Ground</Text>
                         <Text style={styles.smallText}>Arrives in 3 - 5 days</Text>
                     </View>
-                    <View>
-                        <Text style={styles.boldText}>Free</Text>
+                    <View style={styles.selectContainer}>
+                        <View>
+                            <Text style={styles.boldText}>Free</Text>
+                        </View>
+                        <View style={styles.tickContainer}>
+                            {free && <Feather name="check" size={24} color="black" />}
+                        </View>
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.buttonContainer}>
+                <TouchableOpacity onPress={() => setShippingMethod(false, 'FedEx')} style={styles.buttonContainer}>
                     <View>
                         <Text style={styles.boldText}>FedEx</Text>
                         <Text style={styles.smallText}>Arrives Tommorow</Text>
                     </View>
-                    <View>
-                        <Text style={styles.boldText}>$5.99</Text>
+                    <View style={styles.selectContainer}>
+                        <View>
+                            <Text style={styles.boldText}>R 5.99</Text>
+                        </View>
+                        <View style={styles.tickContainer}>
+                            {!free && <Feather name="check" size={24} color="black" />}
+                        </View>
                     </View>
                 </TouchableOpacity>
             </View>
@@ -89,6 +113,14 @@ const styles = StyleSheet.create({
     },
     smallText: {
         color: 'grey',
+    },
+    selectContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    tickContainer: {
+        width: width * 0.11,
+        marginLeft:5,
     }
 })
 

@@ -1,9 +1,10 @@
-import { AUTHENTICATION, ONBOARDING, LOGIN, LOGOUT } from "../actions/auth";
+import { AUTHENTICATION, ONBOARDING, LOGIN, LOGOUT, AUTO_LOGIN } from "../actions/auth";
 
 const initialState = {
-    isAuth: true,
-    isOnboarding: false,
+    isAuth: false,
+    isOnboarding: true,
     user: null,
+    userId: null
 
 }
 
@@ -26,8 +27,17 @@ const authReducer = (state = initialState, action) => {
         case LOGIN:
             return {
                 ...state,
-                user: action.user,
-                isAuth: action.isAuth
+                user:  action.user,
+                isAuth: action.isAuth,
+                userId: action.userId,
+            }
+
+        case AUTO_LOGIN:
+            return {
+                ...state,
+                user:  action.user,
+                isAuth: action.isAuth,
+                userId: action.userId,
             }
 
         case LOGOUT:
