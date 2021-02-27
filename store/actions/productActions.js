@@ -6,6 +6,7 @@ export const ADD_TO_WISHLIST = 'ADD_TO_WISHLIST';
 export const ADD_ADDRESS = 'ADD_ADDRESS';
 export const ADD_CARD = 'ADD_CARD';
 export const ADD_SHIPPING_METHOD = 'ADD_SHIPPING_METHOD';
+export const ADD_TOTAL_PRICE = 'ADD_TOTAL_PRICE';
 
 export const add_to_cart = (data) => {
 
@@ -120,7 +121,7 @@ export const add_address = (data) => {
            throw error;
        }
         // console.log('[CheckCartExists]  ', checkCartExists);
-        dispatch({type: ADD_CARD, address: data})
+        dispatch({type: ADD_ADDRESS, address: data})
     }
 }
 
@@ -129,5 +130,11 @@ export const add_shipping_method = (data) => {
     return dispatch => {
 
         dispatch({type: ADD_SHIPPING_METHOD, shippingMethod: data})
+    }
+}
+
+export const add_total_price = (totalPrice, cartData) => {
+    return dispatch => {
+        dispatch({ type: ADD_TOTAL_PRICE, totalprice: totalPrice, cartproducts: cartData})
     }
 }

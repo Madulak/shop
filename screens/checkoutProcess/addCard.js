@@ -17,7 +17,7 @@ const addCard = ({navigation}) => {
     const submit = (data) => {
       if(data.valid){
         console.log(data);
-        // dispatch(productActions.add_card(data.values));
+        dispatch(productActions.add_card(data.values));
         navigation.navigate('checkout');
       }
     }

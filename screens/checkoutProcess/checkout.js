@@ -1,9 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { useSelector } from 'react-redux';
 
 const { width, height } = Dimensions.get('window');
 
 const checkout = () => {
+    
+    const order_info = useSelector(state => state.product);
+    console.log('[ORDER FROM THE STATE] ', order_info);
 
     return (
         <View style={styles.container}>

@@ -1,4 +1,4 @@
-import { ADD_ADDRESS, ADD_CARD, ADD_SHIPPING_METHOD } from "../actions/productActions";
+import { ADD_ADDRESS, ADD_CARD, ADD_SHIPPING_METHOD, ADD_TOTAL_PRICE } from "../actions/productActions";
 
 
 const initialState = {
@@ -6,7 +6,8 @@ const initialState = {
     address: null,
     creditcard: null,
     shippingMethod: null,
-
+    totalprice: null,
+    cartproducts: null,
 }
 
 const productReducer = (state = initialState, action) => {
@@ -28,6 +29,13 @@ const productReducer = (state = initialState, action) => {
                 ...state,
                 creditcard: action.creditcard
             }
+        case ADD_TOTAL_PRICE:
+            return {
+                ...state,
+                totalprice: action.totalprice,
+                cartproducts: action.cartproducts,
+            }
+
         default:
             return state;
     } 

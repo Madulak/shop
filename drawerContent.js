@@ -57,6 +57,7 @@ const drawerContent = (props) => {
             />
 
             <DrawerIcon 
+                navigate={() => props.navigation.navigate('search')}
                 name={'Search'}
                 icon={<Ionicons name="md-search-outline" size={24} color="black" />}
             />

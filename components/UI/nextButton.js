@@ -1,10 +1,10 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, Dimensions } from 'react-native';
 
-const nextButton = ({color}) => {
+const nextButton = ({color, add_address}) => {
 
     return (
-        <TouchableOpacity style={{...styles.container, backgroundColor: color}}>
+        <TouchableOpacity onPress={add_address} style={{...styles.container, backgroundColor: color}}>
             <Text style={styles.submitText}>Submit</Text>
         </TouchableOpacity>
     );

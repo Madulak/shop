@@ -38,7 +38,14 @@ const shippingAddress = () => {
         }
         if (name !== '' && email !== '' && address !== '' && city !== '' && state !== '' && zip !== '') {
             dispatch(productAction.add_address(data))
+            setName('');
+            setEmail('');
+            setAddress('');
+            setCity('');
+            setState('');
+            setZip('');
         }
+        
     }
 
     return (
@@ -62,12 +69,14 @@ const shippingAddress = () => {
                         <TextInput value={name} 
                             onChangeText={(e) => setName(e)} style={styles.input} 
                             placeholder='Name' 
+                            autoCapitalize='none'
                         />
                     </View>
                     <View style={styles.inputContainer}>
                         <TextInput style={styles.input} placeholder='Email' 
                             onChangeText={e => setEmail(e)}
                             value={email}
+                            autoCapitalize='none'
                         />
                     </View>
 
@@ -75,12 +84,14 @@ const shippingAddress = () => {
                         <TextInput style={styles.input} placeholder='Address' 
                             onChangeText={e => setAddress(e)}
                             value={address}
+                            autoCapitalize='none'
                         />
                     </View>
                     <View style={styles.inputContainer}>
                         <TextInput style={styles.input} placeholder='City' 
                             onChangeText={e => setCity(e)}
                             value={city}
+                            autoCapitalize='none'
                         />
                     </View>
 
@@ -88,12 +99,14 @@ const shippingAddress = () => {
                         <TextInput style={styles.input} placeholder='State' 
                             onChangeText={e => setState(e)}
                             value={state}
+                            autoCapitalize='none'
                         />
                     </View>
                     <View style={styles.inputContainer}>
                         <TextInput style={styles.input} placeholder='Zip Code' 
                             onChangeText={e => setZip(e)}
                             value={zip}
+                            keyboardType='number-pad'
                         />
                     </View>
 

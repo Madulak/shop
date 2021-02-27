@@ -22,6 +22,7 @@ import ShippingUI from './components/UI/ShippingUI';
 import Checkout from './screens/checkoutProcess/checkout';
 import DetailProduct from './screens/detailProduct';
 import HeaderCart from './components/UI/headerCart';
+import Search from './screens/search';
 
 import DrawerContent from './drawerContent';
 
@@ -103,6 +104,22 @@ const mainNavigation = () => {
         );
     }
 
+    const SearchScreens = ({navigation}) => {
+
+        return (
+            <Stack.Navigator screenOptions={{headerLeft: () => (
+                <View>
+                    <Ionicons onPress={() => navigation.toggleDrawer()} style={{padding: 20,}} name="menu-sharp" size={24} color="black" />
+                </View>
+                ),
+                headerRight: () => (
+                    <HeaderCart go_to_cart={() => navigation.navigate('shopping bag')} />
+                )}}>
+                <Stack.Screen name='search' component={Search} />
+            </Stack.Navigator>
+        );
+    }
+
     
     const Authentication = () => {
 
@@ -124,6 +141,7 @@ const mainNavigation = () => {
                 <Drawer.Screen name='shop' component={ShopScreens} />
                 <Drawer.Screen name='Wishlist' component={WishlistScreens} />
                 <Drawer.Screen name='profile' component={ProfileScreens} />
+                <Drawer.Screen name='search' component={SearchScreens} />
             </Drawer.Navigator>
         );
     }

@@ -5,18 +5,20 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { arivals } from '../data';
 import { Entypo } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
+import * as Sharing from 'expo-sharing';
 
 import { useDispatch } from 'react-redux';
 import * as productActions from '../store/actions/productActions';
 import { firebase } from '../config';
-
+//https://images.unsplash.com/photo-1572123748107-b635b10e6a52?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1yZWxhdGVkfDF8fHxlbnwwfHx8&auto=format&fit=crop&w=500&q=60
 const { width, height } = Dimensions.get('window');
 
 const modal = ({route, navigation}) => {
 
     const isCarousel = useRef(null);
     const [index, setIndex] = useState(0)
-    const [data, setData] = useState()
+    const [data, setData] = useState();
+    const [add_to_bag, set_Add_to_bag] = useState(true);
 
     const { id } = route.params;
     const dispatch = useDispatch();
@@ -40,11 +42,24 @@ const modal = ({route, navigation}) => {
     }  
     
     const add_to_cart_Handler = () => {
+        set_Add_to_bag(false)
         dispatch(productActions.add_to_cart(data))
+    }
+
+    const add_to_wishlist = () => {
+        dispatch(productActions.add_to_wishlist(data))
     }
 
     const go_to_cart_screen = () => {
         navigation.navigate('shopping bag')
+    }
+
+    const share_handler = async () => {
+        try {
+            await Sharing.shareAsync('https://images.unsplash.com/photo-1572123748107-b635b10e6a52?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1yZWxhdGVkfDF8fHxlbnwwfHx8&auto=format&fit=crop&w=500&q=60')
+        } catch (error) {
+            console.log('[ERROR] ', error);
+        }
     }
 
     const CarouselCardItem = ({item, index}) => {
@@ -82,7 +97,7 @@ const modal = ({route, navigation}) => {
                             <Entypo name="chevron-thin-down" size={24} color="white" />
                         </TouchableOpacity>
                         
-                        <TouchableOpacity style={styles.button}>
+                        <TouchableOpacity onPress={share_handler} style={styles.button}>
                             <Ionicons name="md-share-social-outline" size={24} color="white" />
                         </TouchableOpacity>
                     </View>
@@ -102,37 +117,42 @@ const modal = ({route, navigation}) => {
                 {data && 
                 
                 <View style={styles.container}>
-                <Carousel
-                    layout='stack'
-                    layoutCardOffset={2}
-                    ref={isCarousel}
-                    data={data.images && data.images}
-                    renderItem={CarouselCardItem}
-                    sliderWidth={SLIDER_WIDTH}
-                    itemWidth={ITEM_WIDTH}
-                    inactiveSlideShift={0}
-                    useScrollView={true}
-                    onSnapToItem={(index) => setIndex(index)}
-                    bounces={false}
-                    decelerationRate={0}
-                />
+                        <Carousel
+                            layout='stack'
+                            layoutCardOffset={2}
+                            ref={isCarousel}
+                            data={data.images && data.images}
+                            renderItem={CarouselCardItem}
+                            sliderWidth={SLIDER_WIDTH}
+                            itemWidth={ITEM_WIDTH}
+                            inactiveSlideShift={0}
+                            useScrollView={true}
+                            onSnapToItem={(index) => setIndex(index)}
+                            bounces={false}
+                            decelerationRate={0}
+                        />
 
-                <View style={styles.priceContainer}>
-                    <Text style={styles.description}>{data.name}</Text>
-                    <Text style={styles.priceText}>R {data.price}.00</Text>
-                </View>
-                
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity onPress={add_to_cart_Handler} style={styles.cartContainer}>
-                        <Text style={{color: 'white',}}>Add To Bag</Text>
-                    </TouchableOpacity>
+                        <View style={styles.priceContainer}>
+                            <Text style={styles.description}>{data.name}</Text>
+                            <Text style={styles.priceText}>R {data.price}.00</Text>
+                        </View>
+                        
+                        <View style={styles.buttonContainer}>
+                            {add_to_bag ? 
+                                <TouchableOpacity onPress={add_to_cart_Handler} style={styles.cartContainer}>
+                                    <Text style={{color: 'white',}}>Add To Bag</Text>
+                                </TouchableOpacity>: 
+                                <TouchableOpacity onPress={go_to_cart_screen}  style={{...styles.cartContainer, ...styles.goCart}}>
+                                    <Text style={{color: 'darkgray'}}>Go to Cart</Text>
+                                </TouchableOpacity>
+                            }
 
-                    <TouchableOpacity onPress={go_to_cart_screen}  style={{...styles.cartContainer, ...styles.goCart}}>
-                        <Text style={{color: 'darkgray'}}>Go to Cart</Text>
-                    </TouchableOpacity>
-                </View>
-                
-            </View>
+                            <TouchableOpacity onPress={add_to_wishlist}  style={{...styles.cartContainer, ...styles.goCart}}>
+                                <Text style={{color: 'darkgray'}}>Add to Wishlist</Text>
+                            </TouchableOpacity>
+                        </View>
+                        
+                    </View>
                 }
 
             </>

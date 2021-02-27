@@ -4,8 +4,9 @@ import arrival from '../components/UI/arrival';
 import CartCard from '../components/UI/cartCard';
 
 import {arivals} from '../data'
-import { useSelector } from 'react-redux';
 import { firebase } from '../config';
+import { useSelector, useDispatch } from 'react-redux';
+import * as productActions from '../store/actions/productActions';
 
 const { width, height } = Dimensions.get('window');
 
@@ -14,6 +15,7 @@ const cart = ({navigation}) => {
     const id = useSelector(state => state.auth.userId);
     const [cartData, setCartData] = useState();
     const [totalPrice, setTotalPrice] = useState();
+    const dispatch = useDispatch();
 
     useEffect(() => {
         let unsubscribe;
@@ -25,9 +27,6 @@ const cart = ({navigation}) => {
                 id: doc.id,
                 product: doc.data()})))
         }) 
-        
-        
-        
         return () => {
             unsubscribe ();
         }
@@ -42,9 +41,12 @@ const cart = ({navigation}) => {
         }
     
     },[cartData])
-  
-
-    console.log('--')
+    
+    const submitCart = () => {
+        dispatch(productActions.add_total_price(totalPrice, cartData));
+        navigation.navigate('shipping')
+    }
+    
     return (
         <>
             {cartData && 
@@ -74,7 +76,7 @@ const cart = ({navigation}) => {
                             {totalPrice && <Text style={styles.priceText}>R {totalPrice && totalPrice}.00</Text>}
                         </View>
     
-                        <TouchableOpacity onPress={() => navigation.navigate('shipping')} style={styles.continueButton}>
+                        <TouchableOpacity onPress={submitCart} style={styles.continueButton}>
                             <Text style={styles.coninueText}>Continue</Text>
                         </TouchableOpacity>
                     </View>
