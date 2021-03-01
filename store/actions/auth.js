@@ -8,6 +8,7 @@ export const LOGIN = 'LOGIN';
 export const ERROR = 'ERROR';
 export const LOGOUT = 'LOGOUT';
 export const AUTO_LOGIN = 'AUTO_LOGIN';
+export const LOADING = 'LOADING';
 
 export const onboarding = () => {
 
@@ -92,6 +93,7 @@ export const auto_login = () => {
 
     return async dispatch => {
         try {
+            dispatch({type: LOADING, loading: true})
             let userId;
             await firebase.auth().onAuthStateChanged(function(user) {
                 if (user) {
@@ -112,6 +114,7 @@ export const auto_login = () => {
                     console.log('[NOT LOGGED IN] ')
                 }
             })
+            dispatch({type: LOADING, loading: false})
 
             
 

@@ -17,18 +17,14 @@ const signin = ({navigation}) => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
 
     const dispatch = useDispatch();
     const auth = () => {
         dispatch(authActions.authentication());
     }
 
-    useEffect(() => {
-        
-        checkIfLoggedIn();
-        
-    },[])
+    
 
     // console.log('[LOADING] ', loading)
 
@@ -37,14 +33,12 @@ const signin = ({navigation}) => {
         dispatch(authActions.login(email, password));
         setEmail('');
         setPassword('');
-        setLoading(false);
+        setTimeout(() => {
+            setLoading(false);
+        }, 5000)
     }
 
-    const checkIfLoggedIn = () => {
-        setLoading(true);
-        dispatch(authActions.auto_login())
-        setLoading(false);
-    }
+    
 
     async function signInWithGoogleAsync() {
         try {

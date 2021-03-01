@@ -1,39 +1,53 @@
 import React from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import * as productActions from '../../store/actions/productActions';
 
 const { width, height } = Dimensions.get('window');
 
-const checkout = () => {
+const checkout = ({navigation}) => {
     
     const order_info = useSelector(state => state.product);
     console.log('[ORDER FROM THE STATE] ', order_info);
+
+    const dispatch = useDispatch();
+
+    const order_handler = () => {
+        dispatch(productActions.create_order());
+        navigation.navigate('home')
+    }
 
     return (
         <View style={styles.container}>
             <View style={styles.contentContainer}>
                 <Text style={styles.checkoutText}>Checkout</Text>
 
-                <View style={styles.paymentSummary}>
-                    <View style={styles.individualSummary}>
-                        <Text style={styles.paymentText}>Payment</Text>
-                        <Text style={styles.cardText}>Visa 4242</Text>
-                    </View>
+                <>
+                    {order_info.creditcard.type !== null && 
+                        <View style={styles.paymentSummary}>
+                            <View style={styles.individualSummary}>
+                                <Text style={styles.paymentText}>Payment</Text>
+                                <Text style={styles.cardText}>{order_info.creditcard.type} {order_info.creditcard.number.slice(-4)}</Text>
+                            </View>
+        
+                            <View style={styles.individualSummary}>
+                                <Text style={styles.paymentText}>Shipping</Text>
+                                <Text style={styles.cardText}>{order_info.shippingMethod}</Text>
+                            </View>
+        
+                            <View style={styles.individualSummary}>
+                                <Text style={styles.paymentText}>Total</Text>
+                                <Text style={styles.cardText}>R {order_info.totalprice}.00</Text>
+                            </View>
+                        </View>
+                    }
 
-                    <View style={styles.individualSummary}>
-                        <Text style={styles.paymentText}>Shipping</Text>
-                        <Text style={styles.cardText}>UPS Ground</Text>
-                    </View>
-
-                    <View style={styles.individualSummary}>
-                        <Text style={styles.paymentText}>Total</Text>
-                        <Text style={styles.cardText}>R 900.00</Text>
-                    </View>
-                </View>
+                </>
+                
             </View>
 
             <View style={styles.orderContainer}>
-                <TouchableOpacity style={styles.placeOrderContainer}>
+                <TouchableOpacity onPress={order_handler} style={styles.placeOrderContainer}>
                     <Text>Place Order</Text>
                 </TouchableOpacity>
             </View>

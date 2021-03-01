@@ -7,6 +7,7 @@ export const ADD_ADDRESS = 'ADD_ADDRESS';
 export const ADD_CARD = 'ADD_CARD';
 export const ADD_SHIPPING_METHOD = 'ADD_SHIPPING_METHOD';
 export const ADD_TOTAL_PRICE = 'ADD_TOTAL_PRICE';
+export const CREATE_ORDER = 'CREATE_ORDER';
 
 export const add_to_cart = (data) => {
 
@@ -74,6 +75,7 @@ export const add_card = (data) => {
         const {userId } = getState().auth;
 
        try {
+            dispatch({type: ADD_CARD, creditcard: data})
             const checkCartExists = 
             await firebase.firestore().collection('users')
             .doc(userId).collection('creditcard').where('type', '==', 'real creditcard').get()
@@ -136,5 +138,45 @@ export const add_shipping_method = (data) => {
 export const add_total_price = (totalPrice, cartData) => {
     return dispatch => {
         dispatch({ type: ADD_TOTAL_PRICE, totalprice: totalPrice, cartproducts: cartData})
+    }
+}
+
+export const create_order = () => {
+    return async (dispatch, getState) => {
+        try {
+            const { userId } = getState().auth;
+            const { cartproducts, totalprice, shippingMethod, creditcard, address } = getState().product
+            
+            const new_order = await firebase.firestore().collection('users').doc(userId).collection('orders').add({
+                type: 'real order',
+                cartproducts,
+                totalprice,
+                shippingMethod,
+                creditcard,
+                address
+            })
+            
+            firebase.firestore().collection('users')
+                .doc(userId).collection('cart').where('type', '==', 'real cart').get()
+                .then(remove_cart => {
+                    const batch = firebase.firestore().batch()
+                    remove_cart.forEach(function(doc) {
+                    batch.delete(doc.ref)
+                    })
+                    return batch.commit()
+                })
+                .then(() => {
+                    console.log('[DELETED CARD ITEMS] ')
+                })
+                
+                
+                dispatch({type: CREATE_ORDER})
+                
+                
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+        
     }
 }

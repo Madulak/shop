@@ -15,7 +15,7 @@ const homescreen = ({navigation}) => {
 
     const isAuth = useSelector(state => state.auth.userId);
     console.log('[AUTH ___ USER] ', isAuth);
-    const [modal, setModal] = useState(false);
+    const [modal, setModal] = useState(true);
     const [products, setProducts] = useState()
     const [featured, setFeatured] = useState();
     
@@ -23,7 +23,7 @@ const homescreen = ({navigation}) => {
 
     useEffect(() => {
         setLoading(true)
-
+        // setModal(true);
         let unsubscribe;
         InteractionManager.runAfterInteractions(() => {
             unsubscribe = firebase.firestore().collection('products').limit(3).onSnapshot(snapshot => {
@@ -34,6 +34,7 @@ const homescreen = ({navigation}) => {
             }) 
             setLoading(false);
         })
+        // setModal(false);
         return () => {
             unsubscribe ();
         }
@@ -49,6 +50,7 @@ const homescreen = ({navigation}) => {
                 product: doc.data()})))
         }) 
         setLoading(false);
+        
         return () => {
             unsubscribe ();
         }
@@ -57,17 +59,10 @@ const homescreen = ({navigation}) => {
     console.log(loading)
     // console.log('[PRODUCTS] ', products ? products : 'one of ' )
 
-    const modalHandler = () => {
-        setModal(state => !state);
-    }
+    
 
     const go_to_detail_product = (id) => {
         navigation.navigate('detail product', { id: id})
-    }
-
-    const goToCart = () => {
-        setModal(state => !state);
-        navigation.navigate('shopping bag');
     }
 
     const navigateDetail = (id) => {
@@ -75,8 +70,8 @@ const homescreen = ({navigation}) => {
     }
 
     return (
-        <>
-            {products ? 
+        <>  
+            {(products && featured) ? 
                 <FlatList
                     ListHeaderComponent={
                         <View style={styles.container}>
@@ -87,7 +82,7 @@ const homescreen = ({navigation}) => {
                                 <>
                                     <Category navigateDetail={navigateDetail} />
         
-                                    <Modal goToCart={goToCart} modalHandler={modalHandler} modals={modal} />
+                                    
         
                                     <View style={styles.arrivalContainer}>
                                         <Text style={styles.arrivalText}>New Arrivals</Text>
@@ -110,9 +105,7 @@ const homescreen = ({navigation}) => {
                     }
                 />:
 
-            <View style={{flex: 1, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center'}}>
-                <ActivityIndicator size='large' color='black' />
-            </View>
+                <Modal  modals={modal} />   
             }
         </>
     )

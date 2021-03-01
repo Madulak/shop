@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import arrival from '../components/UI/arrival';
 import CartCard from '../components/UI/cartCard';
 
@@ -34,29 +34,32 @@ const cart = ({navigation}) => {
 
     useEffect(() => {
         if (cartData) {
-            console.log('[CART DATA] ', cartData);
-            let mapArray = [];
-            cartData.map(el => mapArray.push(el.product.price));
-            setTotalPrice(mapArray.reduce((acumulator, last) => acumulator + last))
+            if (cartData.length > 0) {
+                console.log('[CART DATA] ', cartData);
+                let mapArray = [];
+                cartData.map(el => mapArray.push(el.product.price));
+                setTotalPrice(mapArray.reduce((acumulator, last) => acumulator + last))
+            }
         }
     
     },[cartData])
     
     const submitCart = () => {
         dispatch(productActions.add_total_price(totalPrice, cartData));
-        navigation.navigate('shipping')
+        navigation.navigate('shipping');
     }
     
     return (
         <>
-            {cartData && 
-                <View style={styles.container}>
+            {cartData ?
+                <>
                 {cartData.length === 0 ?
                     <View style={styles.noContainer}>
-                        <Text style={styles.noItemText} >No Items Yet</Text>
+                        <Text style={styles.noItemText} >Your Cart is Empty</Text>
                     </View>
                 :
                 <>
+                    <View style={styles.container}>
                     <FlatList
                         data={cartData && cartData}
                         keyExtractor={item => item.id}
@@ -73,7 +76,7 @@ const cart = ({navigation}) => {
                     <View style={styles.totalPriceContainer}>
                         <View style={styles.priceContainer}>
                             <Text style={styles.totalText}>Total</Text>
-                            {totalPrice && <Text style={styles.priceText}>R {totalPrice && totalPrice}.00</Text>}
+                            {/* {totalPrice && <Text style={styles.priceText}>R {totalPrice && totalPrice}.00</Text>} */}
                         </View>
     
                         <TouchableOpacity onPress={submitCart} style={styles.continueButton}>
@@ -81,11 +84,15 @@ const cart = ({navigation}) => {
                         </TouchableOpacity>
                     </View>
                     {/* <Text>CART</Text> */}
-                    
+                    </View>
                 </>
-    
+
                 }
-            </View>
+                </>
+                :
+                <View style={{...styles.container, justifyContent: 'center',alignItems: 'center'}}>
+                    <ActivityIndicator size='large' color='black' />
+                </View>
             }
 
         </>

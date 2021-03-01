@@ -14,7 +14,7 @@ import * as authActions from './store/actions/auth';
 
 const drawerContent = (props) => {
 
-    // console.log('[PROPS] ', supers)
+    // console.log('[PROPS] ', props)
     const dispatch = useDispatch();
 
     const logoutHandler = () => {
